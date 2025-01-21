@@ -15,7 +15,9 @@ This project simulates a secure file download which includes an Elliptic Curve C
 
 1. Clone this repository or download the script.
    
-``` git clone https://github.com/saketh7502/Sunk_Cost_DDMLab.git ```
+``` 
+git clone https://github.com/saketh7502/Sunk_Cost_DDMLab.git
+```
 
 3. Install the required library:
 ```
