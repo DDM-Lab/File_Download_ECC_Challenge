@@ -1,6 +1,58 @@
 # sunk-cost
 
-TODO Saketh: write a README with python version, and other relevant information to run this
+#  ECC Crypto Challenge
+
+This project simulates a secure file download which includes an Elliptic Curve Cryptography (ECC) challenge. It demonstrates variable download rates, user interaction, and a cryptographic vulnerability using ECC with reused nonces.
+
+
+
+## Requirements
+
+- Python 3.6 or above
+- cryptography library
+
+## Installation
+
+1. Clone this repository or download the script.
+   ```
+git clone https://github.com/saketh7502/Sunk_Cost_DDMLab.git
+   ```
+
+3. Install the required library:
+```
+pip install cryptography
+```
+
+
+## Usage
+
+Run the script using Python:
+```
+python sunkcost.py
+```
+
+
+Follow the on-screen prompts to:
+1. Choose a server for file download
+2. Optionally switch servers during download
+3. View the ECC crypto challenge data
+
+## File Download Simulation
+
+The script simulates downloading a file from two servers:
+- Server 1: Constant download rate
+- Server 2: Variable download rate (decreases over time)
+
+Users can switch servers during the download process.
+
+## ECC Crypto Challenge
+
+After the file download, an ECC encryption challenge is presented. This challenge demonstrates a vulnerability when reusing nonces in ECC encryption.
+
+### Challenge Components:
+- Sender's public key
+- Two encrypted messages using the same nonce
+- Nonces used for encryption
 
 Thoughs:
 
