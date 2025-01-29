@@ -65,6 +65,16 @@ Thoughs:
 > Message: "Switching servers will reset your download progress. Are you sure you want to switch? (yes/no)"
 - At the end, we should have the time they took when the throttling began and if they switched:
 
+
+## Control and treatment conditions:
+
+Control Condition: Participants experience uninterrupted file downloads without throttling or delays.
+Treatment Conditions: Participants encounter file download throttling at varying stages:
+Throttle at 50%, 60%, 70%, 80%, 90% 
+
+
+### Example output:
+
 ```Download Analysis:
 - Total Download Time: 45 seconds
 - Number of Server Switches: 0
