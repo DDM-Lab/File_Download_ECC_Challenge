@@ -146,14 +146,13 @@ Throttle at 50%, 60%, 70%, 80%, 90%
 
 - They should always know they can switch. The option to switch shouldn't appear only after the throttling has begun.
 
-- Right now, the control and treatment are not implemented(?)
-
 - Right now, when I switched, the download restarted in the new server, but I didn't lose progress by switching (I didn't start at zero after switching)
 
 - I would remove the option for the participant not to see the challenge data. They should always get to see it, and should say "no".
 
 - Right now, If I say I don't want to switch I can no longer decided to switch, but I should be able to switch 
 
+- The control is super fast, it should be at the same rhythm as the treatment
 
 - Before switching, ask for confirmation (suggestion):
 
