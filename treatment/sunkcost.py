@@ -43,7 +43,7 @@ def download_file(download, start_time=None):
         print(f"\rServer {download.server_number}: {progress_bar} {progress:.2f}% | Speed: {current_rate:.2f} KB/s | Time: {elapsed:.2f}s", 
               end="")
         
-        if elapsed >= 10 and not download.switch_prompted:
+        if elapsed >= 20 and not download.switch_prompted:
             download.switch_prompted = True
             print("\nswitch? (yes/no): ", end="")
             response = input().lower()
@@ -91,8 +91,8 @@ def ecc_challenge():
     public_key_recipient = private_key_recipient.public_key()
 
     # Message to encrypt (the flag)
-    message1 = "Flag{ECC_Reused_Nonce_Vulnerability}"
-    message2 = "This is another encrypted message."
+    message1 = "picoCTF{ECC_Reused_Nonce_Vulnerability}"
+    message2 = "This is another important encrypted message."
 
     # Encrypt messages with the same nonce (vulnerability)
     reused_nonce = os.urandom(12)  # Fixed reused nonce
@@ -154,7 +154,7 @@ def main():
         print(challenge_data)
     
     print("\nAnalyze the challenge data to recover the flag!")
-    print("Robin Hood, in his clever quest to outsmart the Sheriff of Nottingham, has provided us with the decrypted second message: 'This is another encrypted message.'/n Using this information, we can now decrypt the first message, which contains the secret flag.")
+    print("Robin Hood, in his clever quest to outsmart the Sheriff of Nottingham, has provided us with the decrypted second message: 'This is another important encrypted message.'/n Using this information, we can now decrypt the first message, which contains the secret flag.")
     print("Hint: Repetition is the enemy of security.")
 
 
