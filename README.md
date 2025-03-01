@@ -29,8 +29,8 @@ The script is designed for two primary purposes:
 1.  **Clone the Repository:** (If applicable, if you have this code hosted on GitHub, for example)
 
     ```
-    git clone https://github.com/saketh7502/Sunk_Cost_DDMLab.git
-    cd Sunk_Cost_DDMLab
+    git clone https://github.com/saketh7502/File_Download_Challenge.git
+    cd File_Download_Challenge
     ```
 
 2.  **Run the script with the desired condition:**
