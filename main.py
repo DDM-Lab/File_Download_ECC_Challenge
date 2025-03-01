@@ -6,6 +6,7 @@ from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
+import random
 
 # Global variable to handle CTRL+C
 interrupt_received = False
@@ -154,9 +155,10 @@ def main(is_treatment, debug):
     # For treatment condition, set throttle point to 60% (only for Server 1)
     throttle_point = None
     if is_treatment:
-        throttle_point = 0.6  # Always 60%
+        throttle_points = [0.5,0.6,0.7,0.8,0.9]
+        throttle_point = random.choice(throttle_points)
         if choice == '1' and debug:
-            print(f"\033[93m[DEBUG MODE]Treatment condition: Server 1 will experience throttling at 60% progress\033[0m")
+            print(f"\033[93m[DEBUG MODE] Treatment condition: Server 1 will experience throttling at {throttle_point:.0%} progress\033[0m")
         elif debug:
             print(f"\033[93m[DEBUG MODE]Treatment condition: Server 1 would experience throttling, but Server 2 will not be throttled\033[0m")
 

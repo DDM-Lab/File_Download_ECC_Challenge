@@ -1,171 +1,105 @@
-# sunk-cost
+# File Download Simulation and ECC Crypto Challenge
 
-  
+This Python script simulates a file download process across two servers, incorporating a treatment/control condition. Additionally, it features an Elliptic Curve Cryptography (ECC) challenge that highlights the vulnerability of reusing nonces in encryption.
 
-# ECC Crypto Challenge
+## Overview
 
-  
+The script is designed for two primary purposes:
 
-This project simulates a secure file download which includes an Elliptic Curve Cryptography (ECC) challenge. It demonstrates variable download rates, user interaction, and a cryptographic vulnerability using ECC with reused nonces.
+1.  **Simulate File Downloads:** Users can choose to download a file from one of two servers. In the "treatment" condition, Server 1 experiences progressive throttling. The script tracks server switches, download times, and other relevant metrics for analysis.
 
-  
- 
+2.  **ECC Crypto Challenge:** Presents a cryptographic challenge that demonstrates the security implications of reusing nonces in ECC encryption. The challenge provides encrypted messages and public keys, tasking the user with recovering the original message.
 
-## Requirements
+## Features
 
-  
+*   **Server Switching:** Users can switch between servers during the download process by pressing `CTRL+C`.
+*   **Progress Bar:** Provides a visual representation of the download progress.
+*   **ECC Crypto Challenge:** Includes an interactive challenge to test understanding of cryptographic vulnerabilities.
+*   **Data Collection:** Gathers data on download behavior, server switches, and completion times for analysis.
 
-- Python 3.6 or above
+## Getting Started
 
-- cryptography library
+### Prerequisites
 
-  
+*   Python 3.6+
+*   Cryptography Library: `pip install cryptography`
 
-## Installation
+### Running the Script
 
-  
+1.  **Clone the Repository:** (If applicable, if you have this code hosted on GitHub, for example)
 
-1. Clone this repository or download the script.
+    ```
+    git clone https://github.com/saketh7502/Sunk_Cost_DDMLab.git
+    cd Sunk_Cost_DDMLab
+    ```
 
-```
+2.  **Run the script with the desired condition:**
 
-git clone https://github.com/saketh7502/Sunk_Cost_DDMLab.git
+    *   **Control Condition (no throttling):**
 
-```
+        ```
+        python main.py --control
+        ```
 
-  
+    *   **Treatment Condition (with throttling):**
 
-3. Install the required library:
+        ```
+        python main.py --treatment
+        ```
 
-```
+    *   **Debug Mode (optional):** Adds additional print statements to help understand the logic
 
-pip install cryptography
+        ```
+        python main.py --treatment --debug
+        ```
 
-```
+        or
 
-  
-  
+        ```
+           python main.py --control --debug
+        ```
 
-## Usage
+### Interacting with the Script
 
-  
+*   The script will prompt you to choose a server (1 or 2).
+*   The download progress will be displayed in the console.
+*   You can switch servers at any time by pressing `CTRL+C`. Note that switching servers will reset your download progress.
+*   After the download (successful or cancelled), the ECC Crypto Challenge will be presented.
+*   Finally, the script will output collected data related to the download process.
 
-Run the script using Python:
+## ECC Crypto Challenge Details
 
-```
+The ECC challenge involves two messages encrypted using the same nonce, which is a critical vulnerability.  Here's a breakdown:
 
-python sunkcost.py
+1.  **Encryption Scheme:** The script uses Elliptic-Curve Diffie-Hellman (ECDH) for key exchange and AES-GCM for symmetric encryption.
 
-```
+2.  **Vulnerability:** Reusing the same nonce with the same key in AES-GCM allows an attacker to perform XOR operations on the ciphertexts to potentially recover the plaintext.
 
-  
-  
+3.  **Challenge:** The script provides:
 
-Follow the on-screen prompts to:
+    *   The sender's public key.
+    *   Nonce 1
+    *   Ciphertext 1
+    *   Nonce 2
+    *   Ciphertext 2
 
-1. Choose a server for file download
+    Your task is to analyze the provided data, exploit the nonce reuse vulnerability, and recover the original message contained within `ciphertext1`.
 
-2. Optionally switch servers during download
+4.  **Hints:** Two Hints are Provided for the Challenge after the download and during the display of challenge data.
 
-3. View the ECC crypto challenge data
+## Data Output
 
-  
+At the end of the script's execution, the following data is printed to the console:
 
-## File Download Simulation
+*   `condition`: Whether the script was run in "Treatment" or "Control" mode.
+*   `initial_server_choice`: The server initially selected by the user.
+*   `server_switches`: The number of times the user switched servers.
+*   `server_history`: A list showing the sequence of servers used.
+*   `download_completed`: A boolean indicating whether the download completed successfully.
+*   `total_time`: The total time taken for the download process.
+*   `throttle_point`: (Only in treatment) The point at which throttling began on Server 1.
+*   `is_throttled`: (Only in treatment) A boolean indicating if Server 1 experienced throttling.
 
-  
+This data is intended to be copied and pasted into a survey or data collection tool (e.g. Qualtrics) for further analysis.
 
-**Carolina**: The participants will not see this, correct? Additionally, diference between the servers depends on if the particpant was assigned to the control or treatment groups.
 
-  
-
-The script simulates downloading a file from two servers:
-
-- Server 1: Constant download rate
-
-- Server 2: Variable download rate (decreases over time)
-
-  
-
-Users can switch servers during the download process.
-
-  
-
-## ECC Crypto Challenge
-
-  
-
-After the file download, an ECC encryption challenge is presented. This challenge demonstrates a vulnerability when reusing nonces in ECC encryption.
-
-  
-
-### Challenge Components:
-
-- Sender's public key
-
-- Two encrypted messages using the same nonce
-
-- Nonces used for encryption
-
-
-  
-  
-
-## Control and treatment conditions:
-
-  
-
-Control Condition: Participants experience uninterrupted file downloads without throttling or delays.
-
-Treatment Conditions: Participants encounter file download throttling at varying stages:
-
-Throttle at 50%, 60%, 70%, 80%, 90%
-
-  
-  
-
-
-
-
-## Carolina's Feedback
-
-
-- Provide a better explanation of what the user is downloading and why. - The text "--- Welcome to the ECC Crypto Challenge! ---" should appear in the beginning before the download starts. And more context should be given. For example:
-
-> "Download the encrypted files from the server of your choice to begin the challenge."
-
-- And if we want to keep the storytelling data, we should incorporate that from the beginning instead of just showing it at the end:
-
-> "Analyze the challenge data to recover the flag!
->Robin Hood, in his clever quest to outsmart the Sheriff of Nottingham, has provided us with the decrypted second message: 'This is another encrypted message.'/n Using this information, we can now decrypt the first message, which contains the secret flag.
->Hint: Repetition is the enemy of security."
-
-- At the beginning, inform users that they can switch servers at any time but warn them about the potential consequences :
-
-> Message: "You can switch servers at any point during the download, but doing so will reset your progress. Choose wisely!"
-
-- They should always know they can switch. The option to switch shouldn't appear only after the throttling has begun.
-
-- Right now, when I switched, the download restarted in the new server, but I didn't lose progress by switching (I didn't start at zero after switching)
-
-- I would remove the option for the participant not to see the challenge data. They should always get to see it, and should say "no".
-
-- Right now, If I say I don't want to switch I can no longer decided to switch, but I should be able to switch 
-
-- The control is super fast, it should be at the same rhythm as the treatment
-
-- Before switching, ask for confirmation (suggestion):
-
-> Message: "Switching servers will reset your download progress. Are you sure you want to switch? (yes/no)."
-
-- At the end, we should have the time they took when the throttling began and if they switched:
-
-### Example output:
-
-```Download Analysis:
-
-- Total Download Time: 45 seconds
-
-- Number of Server Switches: 0
-
-- Throttling began at: 80%```
