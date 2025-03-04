@@ -241,8 +241,8 @@ def main(is_treatment, debug):
 
     # --- Data Output ---
     data = {
-        "condition": "Treatment" if is_treatment else "Control",
-        "initial_server_choice": initial_server_choice,
+        "condition": "1" if is_treatment else "0",
+        "isc": initial_server_choice,
         "server_switches": switch_count,
         "server_history": server_history,
         "download_completed": download_completed,
