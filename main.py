@@ -32,6 +32,10 @@ class Download:
 def signal_handler(signum, frame):
     global interrupt_received, already_switched
     
+    if already_switched:
+        print("\n\033[93mYou have already switched servers once. You must continue with this server.\033[0m")
+        return
+        
     interrupt_received = True
     print("\n\033[93mInterrupt received. Preparing to switch servers...\033[0m")
 
@@ -192,6 +196,8 @@ def main(is_treatment, debug):
 
 
     # --- Data Collection Variables ---
+    global already_switched  # Reference the global variable
+    already_switched = False  # Reset at the start of each run
     overall_start_time = time.time()
     switch_count = 0
     server_history = [current_server + 1]  # Record initial server
@@ -215,13 +221,17 @@ def main(is_treatment, debug):
             download_completed = True
             break
         else:
-            print("\n\033[93mSwitching to the other Server...\033[0m")
-            switch_percentage = final_progress
-            switch_count += 1
-            current_server, other_server = other_server, current_server
-            downloads[current_server].downloaded = 0  # Reset progress
-            server_history.append(current_server + 1)  # Record server switch
-            start_time = time.time() # Reset start time after switch
+            if not already_switched:
+                print("\n\033[93mSwitching to the other Server...\033[0m")
+                switch_percentage = final_progress
+                switch_count += 1
+                current_server, other_server = other_server, current_server
+                downloads[current_server].downloaded = 0  # Reset progress
+                server_history.append(current_server + 1)  # Record server switch
+                start_time = time.time() # Reset start time after switch
+                already_switched = True  # Mark that they've switched once
+            else:
+                print("\n\033[91mYou have already switched once and unfortunately cannot switch back. Continuing with the current server...\033[0m")
 
 
     end_time = time.time()
