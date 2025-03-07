@@ -58,8 +58,8 @@ def download_file(download, start_time=None):
             progress_past_throttle = (download.downloaded / download.total_size - download.throttle_point) / (1 - download.throttle_point)
             
             # Start at 50% throttle and increase up to 90% throttle
-            throttle_factor = 0.5 * (0.1 ** progress_past_throttle)  # 0.5 to 0.1 (50% to 90% throttle)
-            throttle_factor = max(0.1, throttle_factor)  # Ensure we don't go below 10% of original speed
+            throttle_factor = 0.6 * (0.01 ** progress_past_throttle)  
+            throttle_factor = max(0.05, throttle_factor)  # Ensure we don't go below 10% of original speed
             
             current_rate = current_rate * throttle_factor
         
@@ -152,11 +152,11 @@ def main(is_treatment, debug):
 
     # Set download rates based on condition
     if is_treatment:
-        server1_rate = 20  # Server 1 speed in KB/s for treatment
-        server2_rate = 20  # Server 2 speed in KB/s for treatment
+        server1_rate = 30  # Server 1 speed in KB/s for treatment
+        server2_rate = 30  # Server 2 speed in KB/s for treatment
     else:
-        server1_rate = 20  
-        server2_rate = 20
+        server1_rate = 30  
+        server2_rate = 30
 
     if debug:
         condition = "Treatment" if is_treatment else "Control"
@@ -235,12 +235,11 @@ def main(is_treatment, debug):
 
 
     end_time = time.time()
-    total_time = end_time - start_time
+    total_time = end_time - overall_start_time
     # --- ECC Challenge ---
     challenge_data = ecc_challenge()
    
     print(challenge_data)
-    
     
     print("\n\033[93mAnalyze the challenge data to recover the flag!\033[0m")
     print("\033[92mHint 1: Repetition is the enemy of security.\033[0m")
