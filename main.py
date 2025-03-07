@@ -10,7 +10,7 @@ import random
 
 # Global variable to handle CTRL+C
 interrupt_received = False
-
+already_switched = False
 # Progress bar function
 def create_progress_bar(percentage, width=50):
     filled = int(width * percentage / 100)
@@ -30,7 +30,12 @@ class Download:
 
 # Signal handler for CTRL+C
 def signal_handler(signum, frame):
-    global interrupt_received
+    global interrupt_received, already_switched
+    
+    if already_switched:
+        print("\n\033[93mYou have already switched servers once. You must continue with this server.\033[0m")
+        return
+        
     interrupt_received = True
     print("\n\033[93mInterrupt received. Preparing to switch servers...\033[0m")
 
@@ -39,21 +44,22 @@ def download_file(download, start_time=None):
     global interrupt_received
     if start_time is None:
         start_time = time.time()
-        
+    throttle_percentage = None
     while download.downloaded < download.total_size and not download.is_cancelled and not interrupt_received:
         current_rate = download.download_rate
         
         # Progressive throttling for treatment condition (only for Server 1)
-        if download.throttle_point and download.server_number == 1 and (download.downloaded / download.total_size) >= download.throttle_point:
+        if download.throttle_point and (download.downloaded / download.total_size) >= download.throttle_point:
             if not download.is_throttled:
                 download.is_throttled = True
                 # No notification about throttling
             
             # Calculate how far past the throttle point we are (0 to 1 scale)
             progress_past_throttle = (download.downloaded / download.total_size - download.throttle_point) / (1 - download.throttle_point)
+            
             # Start at 50% throttle and increase up to 90% throttle
-            throttle_factor = 0.5 - (0.4 * progress_past_throttle)  # 0.5 to 0.1 (50% to 90% throttle)
-            throttle_factor = max(0.1, throttle_factor)  # Ensure we don't go below 10% of original speed
+            throttle_factor = 0.6 * (0.01 ** progress_past_throttle)  
+            throttle_factor = max(0.05, throttle_factor)  # Ensure we don't go below 10% of original speed
             
             current_rate = current_rate * throttle_factor
         
@@ -71,9 +77,20 @@ def download_file(download, start_time=None):
         
         time.sleep(1)
     
+    # Calculate final progress percentage and elapsed time
+    final_progress = (download.downloaded / download.total_size) * 100
+    elapsed_time = time.time() - start_time
+    
     if download.is_cancelled or interrupt_received:
         print(f"\n\033[91mServer {download.server_number} download cancelled.\033[0m")
-    return not (download.is_cancelled or interrupt_received)
+    
+    # Return tuple: (success, elapsed_time, final_progress, throttle_percentage)
+    return (
+        not (download.is_cancelled or interrupt_received),
+        elapsed_time,
+        final_progress,
+        throttle_percentage
+    )
 
 
 # ECC encryption function with reused nonce vulnerability
@@ -135,11 +152,11 @@ def main(is_treatment, debug):
 
     # Set download rates based on condition
     if is_treatment:
-        server1_rate = 20  # Server 1 speed in KB/s for treatment
-        server2_rate = 20  # Server 2 speed in KB/s for treatment
+        server1_rate = 30  # Server 1 speed in KB/s for treatment
+        server2_rate = 30  # Server 2 speed in KB/s for treatment
     else:
-        server1_rate = 15  # Both servers at 15 KB/s for control
-        server2_rate = 15
+        server1_rate = 30  
+        server2_rate = 30
 
     if debug:
         condition = "Treatment" if is_treatment else "Control"
@@ -158,17 +175,18 @@ def main(is_treatment, debug):
         throttle_points = [0.5,0.6,0.7,0.8,0.9]
         throttle_point = random.choice(throttle_points)
         if choice == '1' and debug:
-            print(f"\033[93m[DEBUG MODE] Treatment condition: Server 1 will experience throttling at {throttle_point:.0%} progress\033[0m")
+            print(f"\033[93m[DEBUG MODE] Treatment condition: First server selected will experience throttling at {throttle_point:.0%} progress\033[0m")
         elif debug:
-            print(f"\033[93m[DEBUG MODE]Treatment condition: Server 1 would experience throttling, but Server 2 will not be throttled\033[0m")
-
-    downloads = [
-        Download(1, total_size, server1_rate, throttle_point),
-        Download(2, total_size, server2_rate, None)  # Server 2 never gets throttled
-    ]
-
+            print(f"\033[93m[DEBUG MODE] Treatment condition: First server selected (Server {initial_server_choice}) will experience throttling at {throttle_point:.0%} progress\033[0m")
+    
     current_server = int(choice) - 1 if choice in ['1', '2'] else 0
     other_server = 1 - current_server
+
+    downloads = [
+        Download(1, total_size, server1_rate, throttle_point if current_server == 0 else None),
+        Download(2, total_size, server2_rate, throttle_point if current_server == 1 else None)
+    ]
+
 
     print(f"\n\033[1mStarting download from Server {current_server + 1}...\033[0m")
     print("\033[91mPress CTRL+C to switch servers at any time. But progress will be lost.\033[0m")
@@ -176,37 +194,52 @@ def main(is_treatment, debug):
     # Set up the signal handler for CTRL+C
     signal.signal(signal.SIGINT, signal_handler)
 
+
     # --- Data Collection Variables ---
-    start_time = time.time()
+    global already_switched  # Reference the global variable
+    already_switched = False  # Reset at the start of each run
+    overall_start_time = time.time()
     switch_count = 0
     server_history = [current_server + 1]  # Record initial server
-    throttle_start_time = None
-    throttle_duration = 0.0
+    server_times = [0, 0]  # Time spent in each server (index 0 = Server 1, index 1 = Server 2)
+    server_progress = [0, 0]  # Final progress in each server
+    switch_percentage = None  # Percentage at which the user switched
+    throttle_percentage = None  # Percentage at which throttling began
     download_completed = False
-
+    server_start_time = time.time()
     while True:
         interrupt_received = False
-        success = download_file(downloads[current_server], start_time)  # Pass start_time
+        result = download_file(downloads[current_server], server_start_time)  # Pass start_time
+        success, elapsed_time, final_progress, throttle_pct = result
+        server_times[current_server] = elapsed_time
+        server_progress[current_server] = final_progress
+        # Record throttle percentage if it occurred
+        if throttle_pct is not None:
+            throttle_percentage = throttle_pct
         if success:
             print("\n\033[92mFile downloaded successfully!\033[0m")
             download_completed = True
             break
         else:
-            print("\n\033[93mSwitching to the other Server...\033[0m")
-            switch_count += 1
-            current_server, other_server = other_server, current_server
-            downloads[current_server].downloaded = 0  # Reset progress
-            server_history.append(current_server + 1)  # Record server switch
-            start_time = time.time() # Reset start time after switch
+            if not already_switched:
+                print("\n\033[93mSwitching to the other Server...\033[0m")
+                switch_percentage = final_progress
+                switch_count += 1
+                current_server, other_server = other_server, current_server
+                downloads[current_server].downloaded = 0  # Reset progress
+                server_history.append(current_server + 1)  # Record server switch
+                start_time = time.time() # Reset start time after switch
+                already_switched = True  # Mark that they've switched once
+            else:
+                print("\n\033[91mYou have already switched once and unfortunately cannot switch back. Continuing with the current server...\033[0m")
 
 
     end_time = time.time()
-    total_time = end_time - start_time
+    total_time = end_time - overall_start_time
     # --- ECC Challenge ---
     challenge_data = ecc_challenge()
    
     print(challenge_data)
-    
     
     print("\n\033[93mAnalyze the challenge data to recover the flag!\033[0m")
     print("\033[92mHint 1: Repetition is the enemy of security.\033[0m")
@@ -217,22 +250,34 @@ def main(is_treatment, debug):
 
     # --- Data Output ---
     data = {
-        "condition": "Treatment" if is_treatment else "Control",
-        "initial_server_choice": initial_server_choice,
+        "condition": "1" if is_treatment else "0",
+        "isc": initial_server_choice,
         "server_switches": switch_count,
         "server_history": server_history,
         "download_completed": download_completed,
         "total_time": total_time,
+        "server1_time": server_times[0],  # Time spent in Server 1
+        "server2_time": server_times[1],  # Time spent in Server 2
+        "server1_progress": server_progress[0],  # Final progress in Server 1 (percentage)
+        "server2_progress": server_progress[1],  # Final progress in Server 2 (percentage)
     }
 
+    if switch_count > 0:
+        data["switch_percentage"] = switch_percentage  # Percentage at which they switched
+
     if is_treatment:
-        data["throttle_point"] = downloads[0].throttle_point
-        data["is_throttled"] = downloads[0].is_throttled
+        # Track throttle information for whichever server was initially selected
+        throttled_server = initial_server_choice - 1
+        data["throttle_point_setting"] = downloads[throttled_server].throttle_point * 100 if downloads[throttled_server].throttle_point else None
+        data["is_throttled"] = downloads[throttled_server].is_throttled
+        if throttle_percentage is not None:
+            data["throttle_percentage"] = throttle_percentage  # Actual percentage when throttling began
+
 
     print("\n--- Study Data ---")
     for key, value in data.items():
         print(f"{key}: {value}")
-    print("\033[92mPlease Copy Paste this Study Data to Qualtrics.\033[0m")
+    print("\033[92mPlease Copy Paste this Study Data to Qualtrics to get compensation.\033[0m")
 
 
 if __name__ == "__main__":
