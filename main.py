@@ -11,6 +11,7 @@ import random
 # Global variable to handle CTRL+C
 interrupt_received = False
 already_switched = False
+server_start_time = None
 # Progress bar function
 def create_progress_bar(percentage, width=50):
     filled = int(width * percentage / 100)
@@ -30,20 +31,25 @@ class Download:
 
 # Signal handler for CTRL+C
 def signal_handler(signum, frame):
-    global interrupt_received, already_switched
+    global interrupt_received, already_switched, server_start_time
     
     if already_switched:
         print("\n\033[93mYou have already switched servers once. You must continue with this server.\033[0m")
         return
         
     interrupt_received = True
+    server_start_time = time.time()
     print("\n\033[93mInterrupt received. Preparing to switch servers...\033[0m")
 
 # File download simulation
 def download_file(download, start_time=None):
     global interrupt_received
+    global server_start_time
     if start_time is None:
         start_time = time.time()
+        
+    if server_start_time is None:
+        server_start_time = time.time()
     throttle_percentage = None
     while download.downloaded < download.total_size and not download.is_cancelled and not interrupt_received:
         current_rate = download.download_rate
@@ -66,7 +72,8 @@ def download_file(download, start_time=None):
         chunk = min(current_rate, download.total_size - download.downloaded)
         download.downloaded += chunk
         progress = (download.downloaded / download.total_size) * 100
-        elapsed = time.time() - start_time
+        elapsed = time.time() - server_start_time
+        # elapsed = time.time() - start_time
         
         progress_bar = create_progress_bar(progress)
         
@@ -79,7 +86,7 @@ def download_file(download, start_time=None):
     
     # Calculate final progress percentage and elapsed time
     final_progress = (download.downloaded / download.total_size) * 100
-    elapsed_time = time.time() - start_time
+    elapsed_time = time.time() - server_start_time
     
     if download.is_cancelled or interrupt_received:
         print(f"\n\033[91mServer {download.server_number} download cancelled.\033[0m")
@@ -243,21 +250,25 @@ def main(is_treatment, debug):
     
     print("\n\033[93mAnalyze the challenge data to recover the flag!\033[0m")
     print("\033[92mHint 1: Repetition is the enemy of security.\033[0m")
-    
+    print("\n\033[92mThink about how repeated nonces let you combine the known plaintext")
+    print("          with one of the ciphertexts to recover the key stream—or something like it.")
+    print("          Then you could apply that to the other ciphertext to reveal the first message!")
     print("\n\033[93mDecrypted Cipher Text2 : This is another important encrypted message.\033[0m")
-    print("\033[92mHint 2 :Using the decrypted second message, we can now decrypt the first message, which contains the secret flag.\033[0m")
-    
+    print("\033[92mHint 2: Using the decrypted second message, we can now decrypt the first message, which contains the secret flag.\033[0m")
+    print("\n\033[92mYou might try writing a simple Python script that:")
+    print("          1) Converts the hex-encoded ciphertexts into bytes.")
+    print("          2) XORs the known-plaintext bytes with the second ciphertext (the known-plaintext one).")
+    print("          3) Uses the result of that XOR to decrypt the first ciphertext and recover the hidden flag.")
+
 
     # --- Data Output ---
     data = {
         "condition": "1" if is_treatment else "0",
-        "isc": initial_server_choice,
-        "server_switches": switch_count,
         "server_history": server_history,
         "download_completed": download_completed,
-        "total_time": total_time,
-        "server1_time": server_times[0],  # Time spent in Server 1
-        "server2_time": server_times[1],  # Time spent in Server 2
+        "total_time": round(total_time, 2),
+        "server1_time": round(server_times[0], 2),  # Time spent in Server 1
+        "server2_time": round(server_times[1], 2),  # Time spent in Server 2
         "server1_progress": server_progress[0],  # Final progress in Server 1 (percentage)
         "server2_progress": server_progress[1],  # Final progress in Server 2 (percentage)
     }
@@ -268,16 +279,20 @@ def main(is_treatment, debug):
     if is_treatment:
         # Track throttle information for whichever server was initially selected
         throttled_server = initial_server_choice - 1
-        data["throttle_point_setting"] = downloads[throttled_server].throttle_point * 100 if downloads[throttled_server].throttle_point else None
-        data["is_throttled"] = downloads[throttled_server].is_throttled
+        # throttle_point PRINT
+        data["tp"] = downloads[throttled_server].throttle_point * 100 if downloads[throttled_server].throttle_point else None
+        # data["is_throttled"] = downloads[throttled_server].is_throttled
         if throttle_percentage is not None:
             data["throttle_percentage"] = throttle_percentage  # Actual percentage when throttling began
 
+    print("\033[91mCopy the text bellow to Qualtrics to get compensation for this challenge.\033[0m")
 
     print("\n--- Study Data ---")
     for key, value in data.items():
         print(f"{key}: {value}")
-    print("\033[92mPlease Copy Paste this Study Data to Qualtrics to get compensation.\033[0m")
+
+    print("\033[91mCopy the text above to Qualtrics to get compensation for this challenge.\033[0m")
+
 
 
 if __name__ == "__main__":
