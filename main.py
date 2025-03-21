@@ -86,7 +86,7 @@ def download_file(download, start_time=None):
     
     # Calculate final progress percentage and elapsed time
     final_progress = (download.downloaded / download.total_size) * 100
-    elapsed_time = time.time() - server_start_time
+    
     
     if download.is_cancelled or interrupt_received:
         print(f"\n\033[91mServer {download.server_number} download cancelled.\033[0m")
@@ -94,7 +94,7 @@ def download_file(download, start_time=None):
     # Return tuple: (success, elapsed_time, final_progress, throttle_percentage)
     return (
         not (download.is_cancelled or interrupt_received),
-        elapsed_time,
+        elapsed,
         final_progress,
         throttle_percentage
     )
@@ -188,7 +188,6 @@ def main(is_treatment, debug):
     
     current_server = int(choice) - 1 if choice in ['1', '2'] else 0
     other_server = 1 - current_server
-
     downloads = [
         Download(1, total_size, server1_rate, throttle_point if current_server == 0 else None),
         Download(2, total_size, server2_rate, throttle_point if current_server == 1 else None)
@@ -218,7 +217,7 @@ def main(is_treatment, debug):
         interrupt_received = False
         result = download_file(downloads[current_server], server_start_time)  # Pass start_time
         success, elapsed_time, final_progress, throttle_pct = result
-        server_times[current_server] = elapsed_time
+        
         server_progress[current_server] = final_progress
         # Record throttle percentage if it occurred
         if throttle_pct is not None:
@@ -226,10 +225,12 @@ def main(is_treatment, debug):
         if success:
             print("\n\033[92mFile downloaded successfully!\033[0m")
             download_completed = True
+            server_times[current_server] = elapsed_time
             break
         else:
             if not already_switched:
                 print("\n\033[93mSwitching to the other Server...\033[0m")
+                server_times[current_server] = elapsed_time
                 switch_percentage = final_progress
                 switch_count += 1
                 current_server, other_server = other_server, current_server
