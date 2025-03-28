@@ -8,6 +8,12 @@ from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 import random
 
+
+# Default condition settings
+treatment_mode = True  # Default to control condition
+debug_mode = False
+
+
 # Global variable to handle CTRL+C
 interrupt_received = False
 already_switched = False
@@ -297,11 +303,21 @@ def main(is_treatment, debug):
 
 
 if __name__ == "__main__":
+    
     parser = argparse.ArgumentParser(description="File Download Simulation")
-    group = parser.add_mutually_exclusive_group(required=True)
+    group = parser.add_mutually_exclusive_group()  # No longer required
     group.add_argument("--control", action="store_true", help="Run in control condition (no throttling)")
     group.add_argument("--treatment", action="store_true", help="Run in treatment condition (with throttling)")
     parser.add_argument("--debug", action="store_true", help="Enable debug mode")
+    
     args = parser.parse_args()
+    
+    # Command line args override global defaults
+    if args.treatment:
+        treatment_mode = True
+    elif args.control:
+        treatment_mode = False
+    if args.debug:
+        debug_mode = True
 
-    main(args.treatment, args.debug)
+    main(treatment_mode, debug_mode)
