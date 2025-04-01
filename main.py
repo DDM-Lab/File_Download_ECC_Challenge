@@ -185,7 +185,7 @@ def main(is_treatment, debug):
     # For treatment condition, set throttle point to 60% (only for Server 1)
     throttle_point = None
     if is_treatment:
-        throttle_points = [0.5,0.6,0.7,0.8,0.9]
+        throttle_points = [0.3,0.4,0.5,0.6,0.7]
         throttle_point = random.choice(throttle_points)
         if choice == '1' and debug:
             print(f"\033[93m[DEBUG MODE] Treatment condition: First server selected will experience throttling at {throttle_point:.0%} progress\033[0m")
@@ -288,7 +288,7 @@ def main(is_treatment, debug):
         if throttle_percentage is not None:
             data["throttle_percentage"] = throttle_percentage  # Actual percentage when throttling began
 
-    print("\033[91mCopy the text bellow to Qualtrics to get compensation for this challenge.\033[0m")
+    print("\033[91mCopy the text below to Qualtrics to get compensation for this challenge.\033[0m")
     print("\n--- Study Data ---")
     for key, value in data.items():
         print(f"{key}: {value}")
