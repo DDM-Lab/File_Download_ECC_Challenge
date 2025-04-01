@@ -256,12 +256,8 @@ def main(is_treatment, debug):
     print(challenge_data)
     
     print("\n\033[93mAnalyze the challenge data to recover the flag!\033[0m")
-    print("\033[92mHint 1: Repetition is the enemy of security.\033[0m")
-    print("\n\033[92mThink about how repeated nonces let you combine the known plaintext")
-    print("          with one of the ciphertexts to recover the key stream—or something like it.")
-    print("          Then you could apply that to the other ciphertext to reveal the first message!")
     print("\n\033[93mDecrypted Cipher Text2 : This is another important encrypted message.\033[0m")
-    print("\033[92mHint 2: Using the decrypted second message, we can now decrypt the first message, which contains the secret flag.\033[0m")
+    print("\033[92mHint: Using the decrypted second message, we can now decrypt the first message, which contains the secret flag.\033[0m")
     print("\n\033[92mYou might try writing a simple Python script that:")
     print("          1) Converts the hex-encoded ciphertexts into bytes.")
     print("          2) XORs the known-plaintext bytes with the second ciphertext (the known-plaintext one).")
@@ -293,7 +289,6 @@ def main(is_treatment, debug):
             data["throttle_percentage"] = throttle_percentage  # Actual percentage when throttling began
 
     print("\033[91mCopy the text bellow to Qualtrics to get compensation for this challenge.\033[0m")
-
     print("\n--- Study Data ---")
     for key, value in data.items():
         print(f"{key}: {value}")
