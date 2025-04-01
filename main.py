@@ -288,12 +288,18 @@ def main(is_treatment, debug):
         if throttle_percentage is not None:
             data["throttle_percentage"] = throttle_percentage  # Actual percentage when throttling began
 
-    print("\033[91mCopy the text below to Qualtrics to get compensation for this challenge.\033[0m")
-    print("\n--- Study Data ---")
-    for key, value in data.items():
-        print(f"{key}: {value}")
 
-    print("\033[91mCopy the text above to Qualtrics to get compensation for this challenge.\033[0m")
+    output_file = "qualtrics_data.txt"
+    output_text = "\nUpload this file to Qualtrics to get compensation for this challenge.\n"
+    for key, value in data.items():
+        output_text += f"{key}: {value}\n"
+    
+    if os.path.exists(output_file):
+        print(f"Output file '{os.path.abspath(output_file)}' already exists. Please upload this file to Qualtrics to get compensation for this challenge.")
+    else:
+        with open(output_file, "w") as f:
+            f.write(output_text)
+        print(f"Output file '{os.path.abspath(output_file)}' has been created. Please upload this file to Qualtrics to get compensation for this challenge.")
 
 
 
