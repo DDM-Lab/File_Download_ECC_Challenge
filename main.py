@@ -51,6 +51,7 @@ def signal_handler(signum, frame):
 def download_file(download, start_time=None):
     global interrupt_received
     global server_start_time
+    throttle_flag, shown_throttle_warning = False,False
     if start_time is None:
         start_time = time.time()
         
@@ -74,6 +75,12 @@ def download_file(download, start_time=None):
             throttle_factor = max(0.05, throttle_factor)  # Ensure we don't go below 10% of original speed
             
             current_rate = current_rate * throttle_factor
+            throttle_flag = True
+
+            if throttle_flag and not shown_throttle_warning:
+                print(f"\nWARNING: Download speed dropping.")
+                shown_throttle_warning = True
+
         
         chunk = min(current_rate, download.total_size - download.downloaded)
         download.downloaded += chunk
@@ -83,9 +90,12 @@ def download_file(download, start_time=None):
         
         progress_bar = create_progress_bar(progress)
         
+        
         # Simple status line with no throttling indicator
         status = f"\r\033[1mServer {download.server_number}:\033[0m {progress_bar} \033[92m{progress:.2f}%\033[0m | Speed: \033[94m{current_rate:.2f} KB/s\033[0m | Time: \033[95m{elapsed:.2f}s\033[0m"
-        
+
+
+
         print(status, end="", flush=True)
         
         time.sleep(1)
