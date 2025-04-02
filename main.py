@@ -128,7 +128,7 @@ def encrypt_message(public_key, private_key, message, reused_nonce=None):
 
 # ECC Crypto Challenge function
 def ecc_challenge():
-    print("\n\033[1m--- Welcome to the ECC Crypto Challenge! ---\033[0m")
+    print("\n\033[1m--- Welcome to the Insecure Cryptography Challenge! ---\033[0m")
     
     private_key_sender = ec.generate_private_key(ec.SECP256R1())
     public_key_sender = private_key_sender.public_key()
@@ -136,7 +136,7 @@ def ecc_challenge():
     private_key_recipient = ec.generate_private_key(ec.SECP256R1())
     public_key_recipient = private_key_recipient.public_key()
 
-    message1 = "picoCTF{ECC_Reused_Nonce_Vulnerability}"
+    message1 = "picoCTF{InC_Reused_Nonce_Vulnerability}"
     message2 = "This is another important encrypted message."
 
     reused_nonce = os.urandom(12)
@@ -148,7 +148,7 @@ def ecc_challenge():
         format=serialization.PublicFormat.SubjectPublicKeyInfo
     )
 
-    challenge_data = f"""ECC Crypto Challenge
+    challenge_data = f"""Insecure Cryptography Crypto Challenge
 Public Key (Sender):
 {public_key_bytes.decode()}
 Nonce 1: {nonce1.hex()}
