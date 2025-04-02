@@ -289,7 +289,7 @@ def main(is_treatment, debug):
             data["throttle_percentage"] = throttle_percentage  # Actual percentage when throttling began
 
 
-    output_file = "qualtrics_data.txt"
+    output_file = "download_challenge.txt"
     output_text = "\nUpload this file to Qualtrics to get compensation for this challenge.\n"
     for key, value in data.items():
         output_text += f"{key}: {value}\n"
