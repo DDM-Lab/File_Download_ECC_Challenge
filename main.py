@@ -264,12 +264,12 @@ def main(is_treatment, debug):
     challenge_data = ecc_challenge()
    
     print(challenge_data)
-    
+    print("Decrypted Cipher Text2 : This is another important encrypted message.")
     print("\n\033[93mAnalyze the challenge data to recover the flag!\033[0m")
-    print("\n\033[93mDecrypted Cipher Text2 : This is another important encrypted message.\033[0m")
+    
     print("\033[92mHint: Using the decrypted second message, we can now decrypt the first message, which contains the secret flag.\033[0m")
     print("\n\033[92mYou might try writing a simple Python script that:")
-    print("          1) Converts the hex-encoded ciphertexts into bytes.")
+    print("          1) Converts the hex-encoded ciphertexts, and the known-plaintext into bytes.")
     print("          2) XORs the known-plaintext bytes with the second ciphertext (the known-plaintext one).")
     print("          3) Uses the result of that XOR to decrypt the first ciphertext and recover the hidden flag.")
 
