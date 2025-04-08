@@ -53,7 +53,7 @@ python solver.py
 
 If you've done everything correctly, you should see the recovered message containing the flag.
 
-1. Upload `ports_challenge.txt` to Qualtrics to receive credit for completing the challenge.
+1. Upload `download_challenge.txt` to Qualtrics to receive credit for completing the challenge.
 2. Submit the flag to Qualtrics.
 
 ## How the Attack Works
