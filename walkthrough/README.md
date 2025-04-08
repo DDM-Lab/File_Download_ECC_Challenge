@@ -121,7 +121,5 @@ To deepen your understanding of these concepts:
 If you're having trouble with the solution:
 - Double-check that you've correctly copied all hex values from the challenge output
 - Ensure you're using the exact known plaintext as provided
-- Verify that your XOR function is working correctly with a simple test case
-- Make sure the ciphertexts are properly converted from hex to bytes
 
 Remember: In a real-world scenario, this type of vulnerability could lead to complete compromise of an encryption system. Many high-profile cryptographic failures have occurred due to nonce reuse!
