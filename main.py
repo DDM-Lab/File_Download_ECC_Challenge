@@ -10,7 +10,7 @@ import random
 
 
 # Default condition settings
-treatment_mode = True  # Default to control condition
+treatment_mode = False  # Default to control condition
 debug_mode = False
 
 
