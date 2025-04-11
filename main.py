@@ -195,12 +195,20 @@ def main(is_treatment, debug):
     # For treatment condition, set throttle point to 60% (only for Server 1)
     throttle_point = None
     if is_treatment:
-        throttle_points = [0.3,0.4,0.5,0.6,0.7]
-        throttle_point = random.choice(throttle_points)
+        treatment_throttle_points = [0.75,0.8,0.85,0.9,0.95]
+        throttle_point = random.choice(treatment_throttle_points)
         if choice == '1' and debug:
             print(f"\033[93m[DEBUG MODE] Treatment condition: First server selected will experience throttling at {throttle_point:.0%} progress\033[0m")
         elif debug:
             print(f"\033[93m[DEBUG MODE] Treatment condition: First server selected (Server {initial_server_choice}) will experience throttling at {throttle_point:.0%} progress\033[0m")
+
+    else:
+        control_throttle_points = [0.05,0.1,0.15,0.2,0.25]
+        throttle_point = random.choice(control_throttle_points)
+        if choice == '1' and debug:
+            print(f"\033[93m[DEBUG MODE] Control condition: First server selected will experience throttling at {throttle_point:.0%} progress\033[0m")
+        elif debug:
+            print(f"\033[93m[DEBUG MODE] Control condition: First server selected (Server {initial_server_choice}) will experience throttling at {throttle_point:.0%} progress\033[0m")
     
     current_server = int(choice) - 1 if choice in ['1', '2'] else 0
     other_server = 1 - current_server
