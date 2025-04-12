@@ -4,6 +4,10 @@
 
 This challenge simulates a real-world cryptographic vulnerability involving nonce reuse in stream ciphers. Your goal is to recover a hidden flag by exploiting a critical cryptographic vulnerability.
 
+In this walkthrough you have two files:
+1. This file `walkthrough.md`
+2. The solver `solver.py`
+
 ## The Vulnerability: Nonce Reuse in Stream Ciphers
 
 In this challenge, an encryption system using AES-GCM (a stream cipher mode) commits a critical security error: **reusing the same nonce for multiple encryptions**. 
@@ -21,11 +25,15 @@ This vulnerability is sometimes called a "two-time pad" attack or "stream cipher
 
 ### 1. Run the Challenge
 
-After completing the download simulation, you'll receive cryptographic challenge data, including:
+You can change download servers if you want, by clicking CTRL+C but you lose your progress.
+
+After the download, you'll receive cryptographic challenge data, including:
 - A public key
 - Two nonces (which are identical)
 - Two ciphertexts
 - The decrypted plaintext of the second ciphertext: "This is another important encrypted message."
+
+
 
 ### 2. Complete the Solver Script
 
