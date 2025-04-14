@@ -1,4 +1,4 @@
-# Sanity Download
+# File Download
 
 - Namespace: picoctf/research
 - ID: file-download-ecc
