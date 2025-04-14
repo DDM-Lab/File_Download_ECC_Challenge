@@ -4,8 +4,6 @@ RUN mkdir /challenge && \
     chmod 700 /challenge
 
 WORKDIR /app
-# Don't copy flag.txt directly to /app - this causes the reference issue
-# COPY flag.txt /app/  <- Remove this line
 COPY main.py /app/challenge.py
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
@@ -15,11 +13,9 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
 
 RUN pip install --no-cache-dir cryptography
 
-# Instead, create the flag only inside the container or copy it directly to the artifacts
-COPY flag.txt /tmp/flag.txt
-RUN tar czvf /challenge/artifacts.tar.gz -C /tmp flag.txt && \
-    echo "{\"flag\":\"$(cat /tmp/flag.txt)\"}" > /challenge/metadata.json && \
-    # If your code needs access to the flag, create a copy in /app
-    cp /tmp/flag.txt /app/flag.txt
+# Copy flag.txt to /app for your code to use (internal only)
+COPY flag.txt /app/flag.txt
+# Generate metadata.json without bundling flag.txt in artifacts.tar.gz
+RUN echo "{\"flag\":\"$(cat /app/flag.txt)\"}" > /challenge/metadata.json
 
 CMD ["python", "challenge.py"]
