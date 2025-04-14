@@ -2,8 +2,8 @@ def xor_bytes(a, b):
     return bytes([x ^ y for x, y in zip(a, b)])
 
 # Given data
-ciphertext1 = bytes.fromhex("ba65f2f05059fb1a29401fafc1055eef4609eb7927fce4fb0efc9aa358853cbe101f0fbcfa5f09f341ed195163a6f02239b28ccb7d0036")
-ciphertext2 = bytes.fromhex("9e64f8ec3364ce410d6d3384fb0559bc4a00c4583ae6e6f0258a8aa1559237af061307f5e3430767b638fa29ac9eed543ad64d1c27779a1ef073b361")
+ciphertext1 = bytes.fromhex("07105cb4549a2d5c726eb4282f492a0607f9ee1541b70af667b501472d4ca48500f9a93e5ab38f624f4d6965155b41cd86f74ea5bf7095")
+ciphertext2 = bytes.fromhex("231156a837a718075643980315492d550bf0c13403ad08fd4cc31145205baf9416f5a17743af81824e79c218767ee04e6c990738b5b4ac1306bf8e")
 known_message2 = "This is another important encrypted message".encode()
 
 # XOR the two ciphertexts to get the XOR of the plaintexts

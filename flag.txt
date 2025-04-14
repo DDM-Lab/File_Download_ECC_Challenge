@@ -1,1 +1,1 @@
-picoCTF{InC_Reused_Nonce_Vulnerability}
+picoCTF{ECC_Reused_N0nce_Vulnerability}

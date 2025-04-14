@@ -139,9 +139,11 @@ def ecc_challenge():
 
     private_key_recipient = ec.generate_private_key(ec.SECP256R1())
     public_key_recipient = private_key_recipient.public_key()
+    
+    with open('flag.txt', 'r') as file:
+      message1 = file.read().strip()
 
-    message1 = "picoCTF{InC_Reused_Nonce_Vulnerability}"
-    message2 = "This is another important encrypted message."
+    message2 = "This is another important encrypted message"
 
     reused_nonce = os.urandom(12)
     nonce1, ciphertext1 = encrypt_message(public_key_recipient, private_key_sender, message1, reused_nonce)
