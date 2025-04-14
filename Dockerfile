@@ -4,7 +4,7 @@ RUN mkdir /challenge && \
     chmod 700 /challenge
 
 WORKDIR /app
-COPY challenge.py flag.txt start.sh ./
+COPY main.py flag.txt start.sh ./
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
