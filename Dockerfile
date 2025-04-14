@@ -4,18 +4,20 @@ RUN mkdir /challenge && \
     chmod 700 /challenge
 
 WORKDIR /app
-COPY main.py /app/challenge.py
+COPY challenge.py flag.txt start.sh ./
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     libffi-dev \
-    && rm -rf /var/lib/apt/lists/*
+    netcat-openbsd \
+    && rm -rf /var/lib/apt/lists/* \
+    && chmod +x start.sh
 
 RUN pip install --no-cache-dir cryptography
+RUN echo "{\"flag\":\"$(cat flag.txt)\"}" > /challenge/metadata.json
 
-# Copy flag.txt to /app for your code to use (internal only)
-COPY flag.txt /app/flag.txt
-# Generate metadata.json without bundling flag.txt in artifacts.tar.gz
-RUN echo "{\"flag\":\"$(cat /app/flag.txt)\"}" > /challenge/metadata.json
-
-CMD ["python", "challenge.py"]
+# The start.sh script starts a socat listener on port 5555, that connects to the
+# python script.
+EXPOSE 5555
+# PUBLISH 5555 AS socat
+CMD ["./start.sh"]

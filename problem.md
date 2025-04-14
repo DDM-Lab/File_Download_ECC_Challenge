@@ -13,8 +13,9 @@
 Simulate file downloads and analyze insecure ECC cryptography 
 
 ## Details
-Browse {{server("web")}}:{{port("web")}}, and find the flag! 
+Connect to the program with netcat:
 
+$ nc {{server}} {{port}}
 
 ## Hints
 
