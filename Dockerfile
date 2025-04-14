@@ -1,4 +1,7 @@
-FROM python:3.9-slim
+FROM python:3.9-slim AS challenge
+
+RUN mkdir /challenge && \
+    chmod 700 /challenge
 
 WORKDIR /app
 COPY flag.txt /app/
