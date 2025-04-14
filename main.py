@@ -9,12 +9,10 @@ from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 import random
 
 
-# Default condition settings
 treatment_mode = False  # Default to control condition
 debug_mode = False
 
 
-# Global variable to handle CTRL+C
 interrupt_received = False
 already_switched = False
 server_start_time = None
@@ -24,7 +22,6 @@ def create_progress_bar(percentage, width=50):
     bar = '█' * filled + '░' * (width - filled)
     return f'[{bar}]'
 
-# Download class
 class Download:
     def __init__(self, server_number, total_size, download_rate, throttle_point=None):
         self.server_number = server_number
@@ -35,7 +32,6 @@ class Download:
         self.is_cancelled = False
         self.is_throttled = False
 
-# Signal handler for CTRL+C
 def signal_handler(signum, frame):
     global interrupt_received, already_switched, server_start_time
     
@@ -47,7 +43,6 @@ def signal_handler(signum, frame):
     server_start_time = time.time()
     print("\n\033[93mInterrupt received. Preparing to switch servers...\033[0m")
 
-# File download simulation
 def download_file(download, start_time=None):
     global interrupt_received
     global server_start_time
@@ -86,12 +81,11 @@ def download_file(download, start_time=None):
         download.downloaded += chunk
         progress = (download.downloaded / download.total_size) * 100
         elapsed = time.time() - server_start_time
-        # elapsed = time.time() - start_time
+        
         
         progress_bar = create_progress_bar(progress)
         
         
-        # Simple status line with no throttling indicator
         status = f"\r\033[1mServer {download.server_number}:\033[0m {progress_bar} \033[92m{progress:.2f}%\033[0m | Speed: \033[94m{current_rate:.2f} KB/s\033[0m | Time: \033[95m{elapsed:.2f}s\033[0m"
 
 
@@ -100,14 +94,14 @@ def download_file(download, start_time=None):
         
         time.sleep(1)
     
-    # Calculate final progress percentage and elapsed time
+    
     final_progress = (download.downloaded / download.total_size) * 100
     
     
     if download.is_cancelled or interrupt_received:
         print(f"\n\033[91mServer {download.server_number} download cancelled.\033[0m")
     
-    # Return tuple: (success, elapsed_time, final_progress, throttle_percentage)
+    
     return (
         not (download.is_cancelled or interrupt_received),
         elapsed,
@@ -168,10 +162,10 @@ Ciphertext 2: {ciphertext2.hex()}"""
 
     return challenge_data
 
-# Main function to handle file downloads and challenges
+
 def main(is_treatment, debug):
     global interrupt_received
-    total_size = 1000  # Size of the file in KBs
+    total_size = 1000  
 
     # Set download rates based on condition
     if is_treatment:
@@ -190,7 +184,7 @@ def main(is_treatment, debug):
     print(f"\033[94m2. Server 2 \033[0m")
 
     choice = input("\033[1mEnter your choice (1 or 2): \033[0m")
-    initial_server_choice = int(choice)  # Record initial choice
+    initial_server_choice = int(choice)  
 
     # For treatment condition, set throttle point to 60% (only for Server 1)
     throttle_point = None
@@ -331,7 +325,6 @@ if __name__ == "__main__":
     
     args = parser.parse_args()
     
-    # Command line args override global defaults
     if args.treatment:
         treatment_mode = True
     elif args.control:

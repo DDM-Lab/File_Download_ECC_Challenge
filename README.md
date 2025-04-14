@@ -58,6 +58,9 @@ The script is designed for two primary purposes:
         ```
            python main.py --control --debug
         ```
+    * **Using Docker**
+    1. ```docker build -t file-download-ecc-challenge .```
+    2. ```docker run -it --rm file-download-ecc-challenge```
 
 ### Interacting with the Script
 
