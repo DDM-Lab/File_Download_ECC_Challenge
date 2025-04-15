@@ -1,16 +1,18 @@
 import time
 import os
 import argparse
-import signal
 from cryptography.hazmat.primitives.asymmetric import ec
 from cryptography.hazmat.primitives import hashes, serialization
 from cryptography.hazmat.primitives.kdf.hkdf import HKDF
 from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 import random
+import select
+import sys
 
 
 treatment_mode = False  # Default to control condition
 debug_mode = False
+display_message_times = 0
 
 
 interrupt_received = False
@@ -32,21 +34,31 @@ class Download:
         self.is_cancelled = False
         self.is_throttled = False
 
-def signal_handler(signum, frame):
-    global interrupt_received, already_switched, server_start_time
+def check_for_interrupt():
+    """Check if the interrupt key combination has been pressed."""
+    global interrupt_received, already_switched, server_start_time, display_message_times
     
-    if already_switched:
+    if already_switched and display_message_times > 0:
         print("\n\033[93mYou have already switched servers once. You must continue with this server.\033[0m")
-        return
+        display_message_times -= 1
+        return False
+    
+    # Use select to check if there's input available (non-blocking)
+    if select.select([sys.stdin], [], [], 0)[0]:
+        user_input = sys.stdin.readline().strip()
+        if user_input == "q":  # Our special key combination
+            interrupt_received = True
+            server_start_time = time.time()
+            print("\n\033[93mInterrupt received. Preparing to switch servers...\033[0m")
+            time.sleep(2)
+            return True
         
-    interrupt_received = True
-    server_start_time = time.time()
-    print("\n\033[93mInterrupt received. Preparing to switch servers...\033[0m")
+    return False
 
 def download_file(download, start_time=None):
     global interrupt_received
     global server_start_time
-    throttle_flag, shown_throttle_warning = False,False
+    throttle_flag, shown_throttle_warning = False, False
     if start_time is None:
         start_time = time.time()
         
@@ -54,6 +66,11 @@ def download_file(download, start_time=None):
         server_start_time = time.time()
     throttle_percentage = None
     while download.downloaded < download.total_size and not download.is_cancelled and not interrupt_received:
+        # Check for interrupt
+        check_for_interrupt()
+        if interrupt_received:
+            break
+            
         current_rate = download.download_rate
         
         # Progressive throttling for treatment condition (only for Server 1)
@@ -86,7 +103,7 @@ def download_file(download, start_time=None):
         progress_bar = create_progress_bar(progress)
         
         
-        status = f"\r\033[1mServer {download.server_number}:\033[0m {progress_bar} \033[92m{progress:.2f}%\033[0m | Speed: \033[94m{current_rate:.2f} KB/s\033[0m | Time: \033[95m{elapsed:.2f}s\033[0m"
+        status = f"\r\033[1mServer {download.server_number}:\033[0m {progress_bar} \033[92m{progress:.2f}%\033[0m | Speed: \033[94m{current_rate:.2f} KB/s\033[0m | Time: \033[95m{elapsed:.2f}s\033[0m | Type here: "
 
 
 
@@ -98,7 +115,7 @@ def download_file(download, start_time=None):
     final_progress = (download.downloaded / download.total_size) * 100
     
     
-    if download.is_cancelled or interrupt_received:
+    if (download.is_cancelled or interrupt_received) and not already_switched:
         print(f"\n\033[91mServer {download.server_number} download cancelled.\033[0m")
     
     
@@ -213,11 +230,7 @@ def main(is_treatment, debug):
 
 
     print(f"\n\033[1mStarting download from Server {current_server + 1}...\033[0m")
-    print("\033[91mPress CTRL+C to switch servers at any time. But progress will be lost.\033[0m")
-
-    # Set up the signal handler for CTRL+C
-    signal.signal(signal.SIGINT, signal_handler)
-
+    print("\033[91mType q and press Enter to switch servers at any time. But progress will be lost.\033[0m")
 
     # --- Data Collection Variables ---
     global already_switched  # Reference the global variable
@@ -231,6 +244,7 @@ def main(is_treatment, debug):
     throttle_percentage = None  # Percentage at which throttling began
     download_completed = False
     server_start_time = time.time()
+
     while True:
         interrupt_received = False
         result = download_file(downloads[current_server], server_start_time)  # Pass start_time
