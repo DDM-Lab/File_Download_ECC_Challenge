@@ -2,4 +2,4 @@
 
 set -e
 
-socat tcp-listen:5555,reuseaddr,fork SYSTEM:"python3 main.py"
+socat tcp-listen:5555,reuseaddr,fork EXEC:"python3 /app/main.py"

@@ -4,14 +4,15 @@ RUN mkdir /challenge && \
     chmod 700 /challenge
 
 WORKDIR /app
-COPY main.py flag.txt start.sh ./
+COPY main.py flag.txt ./
+COPY start.sh /opt/
+RUN chmod +x /opt/start.sh
 
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     libffi-dev \
-    netcat-openbsd \
-    && rm -rf /var/lib/apt/lists/* \
-    && chmod +x start.sh
+    socat \
+    && rm -rf /var/lib/apt/lists/*
 
 RUN pip install --no-cache-dir cryptography
 RUN echo "{\"flag\":\"$(cat flag.txt)\"}" > /challenge/metadata.json
@@ -20,4 +21,4 @@ RUN echo "{\"flag\":\"$(cat flag.txt)\"}" > /challenge/metadata.json
 # python script.
 EXPOSE 5555
 # PUBLISH 5555 AS socat
-CMD ["./start.sh"]
+CMD ["/opt/start.sh"]
