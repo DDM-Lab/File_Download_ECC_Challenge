@@ -83,10 +83,10 @@ def download_file(download, start_time=None):
             progress_past_throttle = (download.downloaded / download.total_size - download.throttle_point) / (1 - download.throttle_point)
             
             # Start at 50% throttle and increase up to 90% throttle
-            throttle_factor = 0.6 * (0.01 ** progress_past_throttle)  
-            throttle_factor = max(0.05, throttle_factor)  # Ensure we don't go below 10% of original speed
+            #throttle_factor = 0.6 * (0.01 ** progress_past_throttle)  
+            #throttle_factor = max(0.05, throttle_factor)  # Ensure we don't go below 10% of original speed
             
-            current_rate = current_rate * throttle_factor
+            current_rate = 2
             throttle_flag = True
 
             if throttle_flag and not shown_throttle_warning:
@@ -186,11 +186,11 @@ def main(is_treatment, debug):
 
     # Set download rates based on condition
     if is_treatment:
-        server1_rate = 30  # Server 1 speed in KB/s for treatment
-        server2_rate = 30  # Server 2 speed in KB/s for treatment
+        server1_rate = 20  # Server 1 speed in KB/s for treatment
+        server2_rate = 20  # Server 2 speed in KB/s for treatment
     else:
-        server1_rate = 30  
-        server2_rate = 30
+        server1_rate = 20  
+        server2_rate = 20
 
     if debug:
         condition = "Treatment" if is_treatment else "Control"
@@ -206,7 +206,7 @@ def main(is_treatment, debug):
     # For treatment condition, set throttle point to 60% (only for Server 1)
     throttle_point = None
     if is_treatment:
-        treatment_throttle_points = [0.75,0.8,0.85,0.9,0.95]
+        treatment_throttle_points = [0.75,0.8,0.85,0.9]
         throttle_point = random.choice(treatment_throttle_points)
         if choice == '1' and debug:
             print(f"\033[93m[DEBUG MODE] Treatment condition: First server selected will experience throttling at {throttle_point:.0%} progress\033[0m")
@@ -214,7 +214,7 @@ def main(is_treatment, debug):
             print(f"\033[93m[DEBUG MODE] Treatment condition: First server selected (Server {initial_server_choice}) will experience throttling at {throttle_point:.0%} progress\033[0m")
 
     else:
-        control_throttle_points = [0.05,0.1,0.15,0.2,0.25]
+        control_throttle_points = [0.1,0.15,0.2,0.25]
         throttle_point = random.choice(control_throttle_points)
         if choice == '1' and debug:
             print(f"\033[93m[DEBUG MODE] Control condition: First server selected will experience throttling at {throttle_point:.0%} progress\033[0m")
