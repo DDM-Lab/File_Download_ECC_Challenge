@@ -3,13 +3,27 @@
 - Namespace: picoctf/research
 - ID: file-download-ecc
 - Type: custom
-- Category: Cryptography
+- Category: General Skills
 - Points: 1
 - Templatable: no
-- Max Users: 1
+- MaxUsers: 0
 
 ## Description
+
 Simulate file downloads and analyze insecure ECC cryptography 
+
+## Details
+Connect to the program with netcat:
+
+$ nc {{server}} {{port}}
+
+## Hints
+
+- You can use the walkthrough
+
+## Solution Overview
+
+Just XOR the two provided chipher text, then XOR with the known plain text to get the flag.
 
 ## Challenge Options
 
@@ -22,8 +36,13 @@ ulimits:
 diskquota: 64m
 init: true
 ```
+
+## Learning Objective
+
+Understand why reused nounces are vulnerable.
+
 ## Attributes
 
-- author: DDM Lab
+- author: DDM LAB
 - organization: picoCTF
-- event: S-25 ddmlab reseach study
+- event: DDM LAB Research Study
