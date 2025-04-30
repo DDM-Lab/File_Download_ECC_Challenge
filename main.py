@@ -14,6 +14,7 @@ treatment_mode = False  # Default to control condition
 debug_mode = False
 display_message_times = 0
 
+FLAG = "picoCTF{InC_Reused_Nonce_Vulnerability}"
 
 interrupt_received = False
 already_switched = False
@@ -90,7 +91,7 @@ def download_file(download, start_time=None):
             throttle_flag = True
 
             if throttle_flag and not shown_throttle_warning:
-                print(f"\nWARNING: Download speed dropping.")
+                print(f"\nWARNING: Key generation speed dropping.")
                 shown_throttle_warning = True
 
         
@@ -103,7 +104,7 @@ def download_file(download, start_time=None):
         progress_bar = create_progress_bar(progress)
         
         
-        status = f"\r\033[1mServer {download.server_number}:\033[0m {progress_bar} \033[92m{progress:.2f}%\033[0m | Speed: \033[94m{current_rate:.2f} KB/s\033[0m | Time: \033[95m{elapsed:.2f}s\033[0m | Type here: "
+        status = f"\r\033[1mServer {download.server_number}:\033[0m {progress_bar} \033[92m{progress:.2f}%\033[0m | Speed: \033[94m{current_rate:.2f} KHashes/s\033[0m | Time: \033[95m{elapsed:.2f}s\033[0m | Type here: "
 
 
 
@@ -116,7 +117,7 @@ def download_file(download, start_time=None):
     
     
     if (download.is_cancelled or interrupt_received) and not already_switched:
-        print(f"\n\033[91mServer {download.server_number} download cancelled.\033[0m")
+        print(f"\n\033[91mServer {download.server_number} progress cancelled.\033[0m")
     
     
     return (
@@ -157,7 +158,7 @@ def ecc_challenge():
     private_key_recipient = ec.generate_private_key(ec.SECP256R1())
     public_key_recipient = private_key_recipient.public_key()
 
-    message1 = "picoCTF{InC_Reused_Nonce_Vulnerability}"
+    message1 = FLAG
     message2 = "This is another important encrypted message."
 
     reused_nonce = os.urandom(12)
@@ -196,7 +197,7 @@ def main(is_treatment, debug):
         condition = "Treatment" if is_treatment else "Control"
         print(f"\033[94m[DEBUG MODE] Running in {condition} condition.\033[0m")
 
-    print("\033[1mYou can download the file from the following Servers:\033[0m")
+    print("\033[1mYou can generate the necessary files using the following Servers:\033[0m")
     print(f"\033[94m1. Server 1 \033[0m")
     print(f"\033[94m2. Server 2 \033[0m")
 
@@ -229,7 +230,7 @@ def main(is_treatment, debug):
     ]
 
 
-    print(f"\n\033[1mStarting download from Server {current_server + 1}...\033[0m")
+    print(f"\n\033[1mGenerating cryptographic challenge using Server {current_server + 1}...\033[0m")
     print("\033[91mType q and press Enter to switch servers at any time. But progress will be lost.\033[0m")
 
     # --- Data Collection Variables ---
@@ -255,7 +256,7 @@ def main(is_treatment, debug):
         if throttle_pct is not None:
             throttle_percentage = throttle_pct
         if success:
-            print("\n\033[92mFile downloaded successfully!\033[0m")
+            print("\n\033[92mFile generated successfully!\033[0m")
             download_completed = True
             server_times[current_server] = elapsed_time
             break
@@ -314,7 +315,13 @@ def main(is_treatment, debug):
         if throttle_percentage is not None:
             data["throttle_percentage"] = throttle_percentage  # Actual percentage when throttling began
 
+    print("\n\033[95m--- *** QUALTRICS INFORMATION START *** ---\033[0m")
+    print("\033[95mPlease copy/paste this information into .txt file and upload to Qualtrics to receive compensation for this challenge.\033[0m")
+    for key, value in data.items():
+        print(f"{key}: {value}")
+    print("\033[95m--- *** QUALTRICS INFORMATION END *** ---\033[0m")
 
+    """
     output_file = "download_challenge.txt"
     output_text = "\nUpload this file to Qualtrics to get compensation for this challenge.\n"
     for key, value in data.items():
@@ -326,7 +333,7 @@ def main(is_treatment, debug):
         with open(output_file, "w") as f:
             f.write(output_text)
         print(f"Output file '{os.path.abspath(output_file)}' has been created. Please upload this file to Qualtrics to get compensation for this challenge.")
-
+    """
 
 
 if __name__ == "__main__":
