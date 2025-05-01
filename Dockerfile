@@ -8,6 +8,11 @@ COPY main.py flag.txt ./
 COPY start.sh /opt/
 RUN chmod +x /opt/start.sh
 
+ARG SEED
+ENV SEED=${SEED}
+ARG FLAG
+ENV FLAG=${FLAG}
+
 RUN apt-get update && apt-get install -y --no-install-recommends \
     gcc \
     libffi-dev \
@@ -15,7 +20,8 @@ RUN apt-get update && apt-get install -y --no-install-recommends \
     && rm -rf /var/lib/apt/lists/*
 
 RUN pip install --no-cache-dir cryptography
-RUN echo "{\"flag\":\"$(cat flag.txt)\"}" > /challenge/metadata.json
+
+RUN python setup_challenge.py
 
 # The start.sh script starts a socat listener on port 5555, that connects to the
 # python script.

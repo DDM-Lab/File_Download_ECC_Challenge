@@ -1,29 +1,37 @@
 # File Download
 
 - Namespace: picoctf/research
-- ID: file-download-ecc
+- ID: file-download-ecc-treatment
 - Type: custom
 - Category: General Skills
 - Points: 1
 - Templatable: no
-- MaxUsers: 0
+- MaxUsers: 1
 
 ## Description
 
-Simulate file downloads and analyze insecure ECC cryptography 
+Let's analyze insecure ECC cryptography and find out why reused nonces are bad.
+Can you write a Python script that uses the ciphertexts and plaintext to recover the flag?
+
+**NOTE: Do not close the Qualtrics survey.**
 
 ## Details
 Connect to the program with netcat:
 
-$ nc {{server}} {{port}}
+`$ nc {{server}} {{port}}`
+
+**NOTE: Do not forget to save the Qualtrics data along with the flag!**
 
 ## Hints
 
-- You can use the walkthrough
+- Start by converting the hex-encoded ciphertext and known-plaintext into bytes.
+- XOR the known-plaintext bytes with the second ciphertext (the known-plaintext one).
+- Use the result of the XOR to decrypt the first ciphertext.
+- You can use the walkthrough provided in the Qualtrics survey.
 
 ## Solution Overview
 
-Just XOR the two provided chipher text, then XOR with the known plain text to get the flag.
+XOR the two provided cipher texts, then XOR with the known plain text to get the flag.
 
 ## Challenge Options
 
@@ -39,10 +47,10 @@ init: true
 
 ## Learning Objective
 
-Understand why reused nounces are vulnerable.
+Understand why reused nonces are vulnerable.
 
 ## Attributes
 
 - author: DDM LAB
 - organization: picoCTF
-- event: DDM LAB Research Study
+- event: picoCTF Experimental Problems 1

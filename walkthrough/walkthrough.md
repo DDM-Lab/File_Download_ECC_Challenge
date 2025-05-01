@@ -34,7 +34,6 @@ After the download, you'll receive cryptographic challenge data, including:
 - The decrypted plaintext of the second ciphertext: "This is another important encrypted message."
 
 
-
 ### 2. Complete the Solver Script
 
 Open `solver.py` and follow these steps to complete it:
@@ -61,8 +60,9 @@ python solver.py
 
 If you've done everything correctly, you should see the recovered message containing the flag.
 
-1. Upload `download_challenge.txt` to Qualtrics to receive credit for completing the challenge.
-2. Submit the flag to Qualtrics.
+1. Create a file named `download_challenge.txt` and copy/paste the Qualtrics information into this file.
+2. Upload `download_challenge.txt` to Qualtrics to receive credit for completing the challenge.
+3. Submit the flag to Qualtrics.
 
 ## How the Attack Works
 

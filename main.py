@@ -8,13 +8,16 @@ from cryptography.hazmat.primitives.ciphers.aead import AESGCM
 import random
 import select
 import sys
+import json
 
 
 treatment_mode = False  # Default to control condition
 debug_mode = False
 display_message_times = 0
 
-FLAG = "picoCTF{InC_Reused_Nonce_Vulnerability}"
+with open("/challenge/metadata.json", "r") as f:
+    metadata_flag = json.load(f)
+FLAG = metadata_flag['flag']
 
 interrupt_received = False
 already_switched = False
@@ -295,7 +298,7 @@ def main(is_treatment, debug):
     data = {
         "condition": "1" if is_treatment else "0",
         "server_history": server_history,
-        "download_completed": download_completed,
+        "file_completed": download_completed,
         "total_time": round(total_time, 2),
         "server1_time": round(server_times[0], 2),  # Time spent in Server 1
         "server2_time": round(server_times[1], 2),  # Time spent in Server 2
@@ -316,7 +319,7 @@ def main(is_treatment, debug):
             data["throttle_percentage"] = throttle_percentage  # Actual percentage when throttling began
 
     print("\n\033[95m--- *** QUALTRICS INFORMATION START *** ---\033[0m")
-    print("\033[95mPlease copy/paste this information into .txt file and upload to Qualtrics to receive compensation for this challenge.\033[0m")
+    print("\033[95mPlease copy/paste this information into a .txt file and upload to Qualtrics to receive compensation for this challenge.\033[0m")
     for key, value in data.items():
         print(f"{key}: {value}")
     print("\033[95m--- *** QUALTRICS INFORMATION END *** ---\033[0m")
