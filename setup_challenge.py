@@ -19,7 +19,7 @@ else:
     flag_rand = flag_rand.group()
     flag_rand = flag_rand[1:-1]
 
-new_flag = "picoCTF{InC_Reused_Nonce_Vulnerability_" + flag_rand + "}"
+new_flag = "picoCTF{Reused_Nonce_Vulnerability_" + flag_rand + "}"
 
 metadata = {"flag": new_flag}
 
