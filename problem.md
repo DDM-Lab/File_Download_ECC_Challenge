@@ -1,7 +1,7 @@
 # Reused noncense
 
 - Namespace: picoctf/research
-- ID: file-download-ecc-treatment
+- ID: file-download-ecc-control
 - Type: custom
 - Category: General Skills
 - Points: 1
@@ -53,4 +53,4 @@ Understand why reused nonces are vulnerable.
 
 - author: DDM LAB
 - organization: picoCTF
-- event: picoCTF Experimental Problems 1
+- event: picoCTF Experimental Problems 2
