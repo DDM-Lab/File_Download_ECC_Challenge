@@ -304,20 +304,10 @@ def main(is_treatment, debug):
         "server2_time": round(server_times[1], 2),  # Time spent in Server 2
         "server1_progress": server_progress[0],  # Final progress in Server 1 (percentage)
         "server2_progress": server_progress[1],  # Final progress in Server 2 (percentage)
+        "tp": throttle_point * 100 if throttle_point else None,  # Throttle point percentage
+        "switch_percentage": switch_percentage,  # Percentage at which they switched
     }
-
-    if switch_count > 0:
-        data["switch_percentage"] = switch_percentage  # Percentage at which they switched
-
-    if is_treatment:
-        # Track throttle information for whichever server was initially selected
-        throttled_server = initial_server_choice - 1
-        # throttle_point PRINT
-        data["tp"] = downloads[throttled_server].throttle_point * 100 if downloads[throttled_server].throttle_point else None
-        # data["is_throttled"] = downloads[throttled_server].is_throttled
-        if throttle_percentage is not None:
-            data["throttle_percentage"] = throttle_percentage  # Actual percentage when throttling began
-
+    
     print("\n\033[95m--- *** QUALTRICS INFORMATION START *** ---\033[0m")
     print("\033[95mPlease copy/paste this information into a .txt file and upload to Qualtrics to receive compensation for this challenge.\033[0m")
     for key, value in data.items():
